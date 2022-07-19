@@ -4,3 +4,4 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=GUXRJDA9KU3QN)
 
 # DDF Link Bot
+The ultimate - customized for DDF - amazon link generator to be found!
