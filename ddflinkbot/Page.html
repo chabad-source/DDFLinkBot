@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col s12 m6">
+          <blockquote>
+            <h4>DDF Link Generator</h4>
+          </blockquote>
+        </div> <!-- CLOSE COL -->
+      </div> <!-- CLOSE ROW -->
+
+      <div class="row">
+        <div class="col s12 m6">
+          <div class="input-field">
+            <i class="material-icons prefix">link</i>
+            <input id="input" type="text" class="validate">
+            <label for="input">Input Amazon URL or ASIN</label>
+          </div>
+        </div> <!-- CLOSE COL -->
+      </div> <!-- CLOSE ROW -->
+
+      <div id="loading" class="row">
+        <div class="col s10 offset-s1 m4 offset-m1">
+          <div class="progress">
+              <div class="indeterminate"></div>
+          </div>
+        </div> <!-- CLOSE COL -->
+      </div> <!-- CLOSE ROW -->
+
+      <div class="row center-align">
+        <div class="col s12 m6">
+          <button id="btn" class="waves-effect waves-light btn light-blue accent-2">Submit</button>
+        </div> <!-- CLOSE COL -->
+      </div> <!-- CLOSE ROW -->
+
+      <div class="row center-align">
+        <div class="col s12 m10">
+          <blockquote>
+            <p id="warning"> </p>
+          </blockquote>
+        </div> <!-- CLOSE COL -->
+      </div> <!-- CLOSE ROW -->   
+
+      <div class="row center-align">
+        <div class="col s12 m10">
+          <div class="highlight">
+              <p id="title" class="flow-text"></p>
+          </div>
+        </div> <!-- CLOSE COL -->
+      </div> <!-- CLOSE ROW -->      
+      
+      <div class="row center-align">
+        <div class="col s12 m10">
+          <div class="highlight">
+              <p id="bbc" class="flow-text"></p>
+          </div>
+        </div> <!-- CLOSE COL -->
+      </div> <!-- CLOSE ROW -->
+
+
+    </div> <!-- CLOSE CONTAINER -->
+  </body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <script type="text/javascript">
+    var user;
+  </script>
+  <script type="text/javascript" src="https://l2.io/ip.js?var=user"></script>
+  <script type="text/javascript">
+    google.script.run.user(user);
+  </script>
+
+  <script> 
+    var loading = document.getElementById("loading");
+    loading.style.display = "none";  
+
+    function copy() {
+      var copyText = document.querySelector("#input");
+      copyText.select();
+      document.execCommand("copy");
+      M.toast({html: 'Text Copied!'})
+    }
+
+    function onSuccess(result) {
+      if (result == "noLinkError"){
+        loading.style.display = "none";
+        M.toast({html: "No Amazon link found!"})
+        document.getElementById("input").value = "";
+        document.getElementById("warning").innerHTML = result;
+      } else if (result == "productLinkError"){
+        loading.style.display = "none";
+        M.toast({html: "Not a valid Amazon product URL!"})
+        document.getElementById("input").value = "";
+        document.getElementById("warning").innerHTML = result;
+      } else if (result == "proxyError"){
+        loading.style.display = "none";
+        M.toast({html: "Proxy error! Double check the URL"})
+        document.getElementById("input").value = "";
+        document.getElementById("warning").innerHTML = result;
+      } else {
+        loading.style.display = "none";
+        document.getElementById("input").value = result.bbcCode;
+        copy()
+        document.getElementById("input").value = "";
+        document.getElementById("warning").innerHTML = "Text Copied!";
+        document.getElementById("title").innerHTML = result.shortTitle;
+        document.getElementById("bbc").innerHTML = result.bbcCode;
+      }
+
+    }
+
+    var input = document.getElementById("input");
+    input.addEventListener("keyup", function(event) {
+      if (event.keyCode === 13) {
+      event.preventDefault();
+      document.getElementById("btn").click();
+      }
+    }); 
+
+    document.getElementById("btn").addEventListener("click",doStuff);
+    function doStuff() {
+      loading.style.display = "block";
+      var input = document.getElementById("input").value;
+      google.script.run.withSuccessHandler(onSuccess).userClicked(input, user);
+    }
+
+  </script>
